@@ -19,6 +19,10 @@ public:
     std::pair<int,int> findKing(bool isWhite);
     bool isSquareUnderAttack(int x, int y, bool byWhite);
     bool isKingInCheck(bool isWhite);
+    bool isInside(int x, int y);
+
+    bool isCheckmate(bool isWhite);
+    bool hasAnyValidMove(bool isWhite);
 
 private:
     int boardState[8][8];
@@ -28,6 +32,7 @@ private:
     int selectedCol;
 
     bool hasSelection;
+    bool whiteTurn;
 
     std::vector<std::pair<int,int>> possibleMoves;
 

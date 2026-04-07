@@ -8,16 +8,17 @@ Board::Board() {
     size = 64;
     selectedRow = -1;
     selectedCol = -1;
+    whiteTurn = true;
 
     int initial[8][8] = {
-        {-5,-4,-3,-2,-1,-3,-4,-5},
+        {-5,-4,-3,-1,-2,-3,-4,-5},
         {-6,-6,-6,-6,-6,-6,-6,-6},
         { 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 0, 0, 0, 0, 0, 0, 0},
         { 6, 6, 6, 6, 6, 6, 6, 6},
-        { 5, 4, 3, 2, 1, 3, 4, 5}
+        { 5, 4, 3, 1, 2, 3, 4, 5}
     };
 
     memcpy(boardState, initial, sizeof(boardState));
@@ -25,22 +26,34 @@ Board::Board() {
 }
 
 void Board::handleClick(int mouseX, int mouseY) {
-    int size = 64;
 
+    int size = 64;
     int x = mouseY / size;
     int y = mouseX / size;
 
+    // 🔥 proteção de limite
+    if (!isInside(x, y))
+        return;
+
+    int piece = boardState[x][y];
+
     if (!hasSelection) {
-        if (boardState[x][y] != 0) {
+
+        if (piece != 0) {
+
+            // impede pegar peça errada
+            if ((whiteTurn && piece < 0) || (!whiteTurn && piece > 0))
+                return;
+
             selectedRow = x;
             selectedCol = y;
             hasSelection = true;
-        
-        LOG("Peca selecionada: X=" << x << " Y=" << y);
 
             possibleMoves = getValidMoves(x, y);
         }
+
     } else {
+
         bool validMove = false;
 
         for (auto move : possibleMoves) {
@@ -51,8 +64,20 @@ void Board::handleClick(int mouseX, int mouseY) {
         }
 
         if (validMove) {
+
             boardState[x][y] = boardState[selectedRow][selectedCol];
             boardState[selectedRow][selectedCol] = 0;
+
+            // troca turno
+            whiteTurn = !whiteTurn;
+
+            // verifica xeque-mate
+            if (isCheckmate(whiteTurn)) {
+                if (whiteTurn)
+                    std::cout << "Xeque-mate! Pretas venceram\n";
+                else
+                    std::cout << "Xeque-mate! Brancas venceram\n";
+            }
         }
 
         hasSelection = false;
@@ -121,6 +146,10 @@ std::pair<int,int> Board::findKing(bool isWhite) {
     return {-1, -1}; // erro
 }
 
+bool Board::isInside(int x, int y) {
+    return x >= 0 && x < 8 && y >= 0 && y < 8;
+}
+
 bool Board::isSquareUnderAttack(int x, int y, bool byWhite) {
 
     for (int i = 0; i < 8; i++) {
@@ -129,11 +158,11 @@ bool Board::isSquareUnderAttack(int x, int y, bool byWhite) {
             int piece = boardState[i][j];
             if (piece == 0) continue;
 
-            // filtra cor
+            // filtra cor atacante
             if (byWhite && piece < 0) continue;
             if (!byWhite && piece > 0) continue;
 
-            // 🔥 tratamento especial para peão
+            // 🔥 PEÃO (tratamento especial)
             if (abs(piece) == 6) {
                 int dir = (piece > 0) ? -1 : 1;
 
@@ -143,6 +172,7 @@ bool Board::isSquareUnderAttack(int x, int y, bool byWhite) {
                 continue;
             }
 
+            // outras peças
             auto moves = getMoves(i, j);
 
             for (const auto& move : moves) {
@@ -219,7 +249,7 @@ std::vector<std::pair<int,int>> Board::getMoves(int x, int y) {
         int dir = isWhite ? -1 : 1;
 
         // andar 1 casa
-        if (x + dir >= 0 && x + dir < 8 && boardState[x + dir][y] == 0)
+        if (isInside(x + dir, y) && boardState[x + dir][y] == 0)
             moves.push_back({x + dir, y});
 
         // andar 2 casas (apenas no movimento inicial)
@@ -235,7 +265,7 @@ std::vector<std::pair<int,int>> Board::getMoves(int x, int y) {
             int i = x + a[0];
             int j = y + a[1];
 
-            if (i>=0 && i<8 && j>=0 && j<8) {
+            if (isInside(i, j)) {
                 if ((isWhite && boardState[i][j] < 0) ||
                     (!isWhite && boardState[i][j] > 0)) {
                     moves.push_back({i,j});
@@ -289,27 +319,66 @@ std::vector<std::pair<int,int>> Board::getValidMoves(int x, int y) {
     std::vector<std::pair<int,int>> valid;
 
     int piece = boardState[x][y];
+    if (piece == 0) return valid;
+
     bool isWhite = piece > 0;
 
-    for (auto move : moves) {
+    for (const auto& move : moves) {
 
         int toX = move.first;
         int toY = move.second;
 
         int captured = boardState[toX][toY];
 
-        // simula
+        // 🧠 SIMULA movimento
         boardState[toX][toY] = piece;
         boardState[x][y] = 0;
 
+        // 🔥 testa se ficou em xeque
         if (!isKingInCheck(isWhite)) {
             valid.push_back(move);
         }
 
-        // desfaz
+        // 🔁 DESFAZ movimento
         boardState[x][y] = piece;
         boardState[toX][toY] = captured;
     }
 
     return valid;
+}
+
+bool Board::hasAnyValidMove(bool isWhite) {
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+
+            int piece = boardState[i][j];
+            if (piece == 0) continue;
+
+            // pega só peças da cor
+            if (isWhite && piece < 0) continue;
+            if (!isWhite && piece > 0) continue;
+
+            auto moves = getValidMoves(i, j);
+
+            if (!moves.empty()) {
+                return true; // ainda tem jogada
+            }
+        }
+    }
+
+    return false; // sem jogadas
+}
+
+bool Board::isCheckmate(bool isWhite) {
+
+    // 1. precisa estar em xeque
+    if (!isKingInCheck(isWhite))
+        return false;
+
+    // 2. não pode ter nenhum movimento válido
+    if (hasAnyValidMove(isWhite))
+        return false;
+
+    return true;
 }
