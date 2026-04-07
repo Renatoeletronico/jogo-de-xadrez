@@ -38,7 +38,7 @@ void Board::handleClick(int mouseX, int mouseY) {
         
         LOG("Peca selecionada: X=" << x << " Y=" << y);
 
-            calculateMoves(x, y);
+            possibleMoves = getValidMoves(x, y);
         }
     } else {
         bool validMove = false;
@@ -88,321 +88,6 @@ int Board::getSize() {
     return size;
 }
 
-void Board::calculateMoves(int x, int y) {
-    possibleMoves.clear();
-
-    int piece = boardState[x][y];
-
-    // Peça: peão branco
-    if (piece == 6 && selectedCol <= 7) {
-        if (selectedRow == 6 && boardState[x-2][y] == 0 && boardState[x-1][y] == 0)
-            possibleMoves.push_back({x-2, y});
-        if (boardState[x-1][y] == 0 )
-            possibleMoves.push_back({x-1, y});
-        if (x>0 && boardState[x-1][y-1] != 0)
-            possibleMoves.push_back({x-1, y-1});
-        if (x<7 && boardState[x-1][y+1] != 0)
-            possibleMoves.push_back({x-1, y+1});
-    }
-
-    // Peça: peão preto
-    if (piece == -6 && selectedCol >= 0) {
-        if (selectedRow == 1 && boardState[x+2][y] == 0 && boardState[x+1][y] == 0)
-            possibleMoves.push_back({x+2, y});
-        if (boardState[x+1][y] == 0)
-            possibleMoves.push_back({x+1, y});
-        if (x>0 && boardState[x+1][y-1] != 0)
-            possibleMoves.push_back({x+1, y-1});    
-        if (x<7 && boardState[x+1][y+1] != 0)
-            possibleMoves.push_back({x+1, y+1});
-    }
-        // Peça: torre branca
-    if (piece == 5 && selectedCol <= 7) {
-        for (int i = x-1; i >= 0; i--) {
-            if (boardState[i][y] == 0)
-                possibleMoves.push_back({i, y});
-            else {
-                if (boardState[i][y] < 0)
-                    possibleMoves.push_back({i, y});
-                break;
-            }
-        }
-        for (int i = x+1; i <= 7; i++) {
-            if (boardState[i][y] == 0)
-                possibleMoves.push_back({i, y});
-            else {
-                if (boardState[i][y] < 0)
-                    possibleMoves.push_back({i, y});
-                break;
-            }
-        }
-        for (int j = y-1; j >= 0; j--) {
-            if (boardState[x][j] == 0)
-                possibleMoves.push_back({x, j});
-            else {
-                if (boardState[x][j] < 0)
-                    possibleMoves.push_back({x, j});
-                break;
-            }
-        }
-        for (int j = y+1; j <= 7; j++) {
-            if (boardState[x][j] == 0)
-                possibleMoves.push_back({x, j});
-            else {
-                if (boardState[x][j] < 0)
-                    possibleMoves.push_back({x, j});
-                break;
-            }
-        }
-    }
-
-    // Peça: torre preta
-    if (piece == -5 && selectedCol >= 0) {  
-        for (int i = x-1; i >= 0; i--) {
-            if (boardState[i][y] == 0)
-                possibleMoves.push_back({i, y});
-            else {
-                if (boardState[i][y] > 0)
-                    possibleMoves.push_back({i, y});
-                break;
-            }
-        }
-        for (int i = x+1; i <= 7; i++) {
-            if (boardState[i][y] == 0)
-                possibleMoves.push_back({i, y});
-            else {
-                if (boardState[i][y] > 0)
-                    possibleMoves.push_back({i, y});
-                break;
-            }
-        }
-        for (int j = y-1; j >= 0; j--) {
-            if (boardState[x][j] == 0)
-                possibleMoves.push_back({x, j});
-            else {
-                if (boardState[x][j] > 0)
-                    possibleMoves.push_back({x, j});
-                break;
-            }
-        }
-        for (int j = y+1; j <= 7; j++) {
-            if (boardState[x][j] == 0)
-                possibleMoves.push_back({x, j});
-            else {
-                if (boardState[x][j] > 0)
-                    possibleMoves.push_back({x, j});
-                break;
-            }
-        }
-    }
-
-    // Peça: bispo branco
-    if (piece == 3 && selectedCol <= 7) {
-        for (int i = x-1, j = y-1; i >= 0 && j >= 0; i--, j--) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] < 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x-1, j = y+1; i >= 0 && j <= 7; i--, j++) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] < 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x+1, j = y-1; i <= 7 && j >= 0; i++, j--) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] < 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x+1, j = y+1; i <= 7 && j <= 7; i++, j++) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] < 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-    }
-
-    // Peça: bispo preto
-    if (piece == -3 && selectedCol >= 0) {  
-        for (int i = x-1, j = y-1; i >= 0 && j >= 0; i--, j--) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] > 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x-1, j = y+1; i >= 0 && j <= 7; i--, j++) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] > 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x+1, j = y-1; i <= 7 && j >= 0; i++, j--) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] > 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-        for (int i = x+1, j = y+1; i <= 7 && j <= 7; i++, j++) {
-            if (boardState[i][j] == 0)
-                possibleMoves.push_back({i, j});
-            else {
-                if (boardState[i][j] > 0)
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-        }
-    }
-
-        // Peça: cavalo branco
-    if (piece == 4 && selectedCol <= 7) {   
-        int moves[8][2] = {
-            {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2},
-            {1, -2}, {1, 2}, {2, -1}, {2, 1}
-        };
-
-        for (auto move : moves) {
-            int newX = x + move[0];
-            int newY = y + move[1];
-
-            if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7) {
-                if (boardState[newX][newY] <= 0)
-                    possibleMoves.push_back({newX, newY});
-            }
-        }
-    }
-
-    // Peça: cavalo preto
-    if (piece == -4 && selectedCol >= 0) {  
-        int moves[8][2] = {
-            {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2},
-            {1, -2}, {1, 2}, {2, -1}, {2, 1}
-        };
-
-        for (auto move : moves) {
-            int newX = x + move[0];
-            int newY = y + move[1];
-
-            if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7) {
-                if (boardState[newX][newY] >= 0)
-                    possibleMoves.push_back({newX, newY});
-            }
-        }
-    }
-
-    // Peça: rei branco
-    if (piece == 1 && selectedCol <= 7) {  
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (i == 0 && j == 0) continue;
-
-                int newX = x + i;
-                int newY = y + j;
-
-                if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7) {
-                    if (boardState[newX][newY] <= 0)
-                        possibleMoves.push_back({newX, newY});
-                }
-            }
-        }
-    }
-
-    // Peça: rei preto
-    if (piece == -1 && selectedCol >= 0) {
-
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (i == 0 && j == 0) continue;
-
-                int newX = x + i;
-                int newY = y + j;
-
-                if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7) {
-                    if (boardState[newX][newY] >= 0)
-                        possibleMoves.push_back({newX, newY});
-                }
-            }
-        }
-    }
-
-        //Peça: rainha branca
- if (piece == 2 && selectedCol <= 7) { // rainha branca
-
-    int directions[8][2] = {
-        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // torre
-        {-1, -1}, {-1, 1}, {1, -1}, {1, 1} // bispo
-    };
-
-    for (auto dir : directions) {
-        int i = x + dir[0];
-        int j = y + dir[1];
-
-        while (i >= 0 && i < 8 && j >= 0 && j < 8) {
-
-            if (boardState[i][j] == 0) {
-                possibleMoves.push_back({i, j});
-            } else {
-                if (boardState[i][j] < 0) // inimigo
-                    possibleMoves.push_back({i, j});
-                break;
-            }
-
-            i += dir[0];
-            j += dir[1];
-        }
-    }
-}
-        // Peça: rainha preta
-    if (piece == -2 && selectedCol >= 0) { // rainha preta
-    
-        int directions[8][2] = {
-            {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // torre
-            {-1, -1}, {-1, 1}, {1, -1}, {1, 1} // bispo
-        };
-    
-        for (auto dir : directions) {
-            int i = x + dir[0];
-            int j = y + dir[1];
-    
-            while (i >= 0 && i < 8 && j >= 0 && j < 8) {
-    
-                if (boardState[i][j] == 0) {
-                    possibleMoves.push_back({i, j});
-                } else {
-                    if (boardState[i][j] > 0) // inimigo
-                        possibleMoves.push_back({i, j});
-                    break;
-                }
-    
-                i += dir[0];
-                j += dir[1];
-            }
-        }
-}
-}
-
 void Board::drawHighlights(sf::RenderWindow& window) {
 
     RectangleShape highlight(Vector2f(size, size));
@@ -442,27 +127,28 @@ bool Board::isSquareUnderAttack(int x, int y, bool byWhite) {
         for (int j = 0; j < 8; j++) {
 
             int piece = boardState[i][j];
-
             if (piece == 0) continue;
 
-            // verifica apenas peças da cor atacante
+            // filtra cor
             if (byWhite && piece < 0) continue;
             if (!byWhite && piece > 0) continue;
 
-            // gera movimentos dessa peça
-            std::vector<std::pair<int,int>> movesBackup = possibleMoves;
-            possibleMoves.clear();
+            // 🔥 tratamento especial para peão
+            if (abs(piece) == 6) {
+                int dir = (piece > 0) ? -1 : 1;
 
-            calculateMoves(i, j);
-
-            for (auto move : possibleMoves) {
-                if (move.first == x && move.second == y) {
-                    possibleMoves = movesBackup;
+                if (i + dir == x && (j - 1 == y || j + 1 == y))
                     return true;
-                }
+
+                continue;
             }
 
-            possibleMoves = movesBackup;
+            auto moves = getMoves(i, j);
+
+            for (const auto& move : moves) {
+                if (move.first == x && move.second == y)
+                    return true;
+            }
         }
     }
 
@@ -477,6 +163,88 @@ bool Board::isKingInCheck(bool isWhite) {
         kingPos.second,
         !isWhite // inimigo
     );
+}
+
+std::vector<std::pair<int,int>> Board::getMoves(int x, int y) {
+
+    std::vector<std::pair<int,int>> moves;
+
+    int piece = boardState[x][y];
+    if (piece == 0) return moves;
+
+    bool isWhite = piece > 0;
+
+    // TORRE
+    if (abs(piece) == 5) {
+        int dir[4][2] = {{-1,0},{1,0},{0,-1},{0,1}};
+        addDirectionalMoves(moves, x, y, dir, 4, isWhite, true);
+    }
+
+    // BISPO
+    if (abs(piece) == 3) {
+        int dir[4][2] = {{-1,-1},{-1,1},{1,-1},{1,1}};
+        addDirectionalMoves(moves, x, y, dir, 4, isWhite, true);
+    }
+
+    // RAINHA
+    if (abs(piece) == 2) {
+        int dir[8][2] = {
+            {-1,0},{1,0},{0,-1},{0,1},
+            {-1,-1},{-1,1},{1,-1},{1,1}
+        };
+        addDirectionalMoves(moves, x, y, dir, 8, isWhite, true);
+    }
+
+    // REI
+    if (abs(piece) == 1) {
+        int dir[8][2] = {
+            {-1,0},{1,0},{0,-1},{0,1},
+            {-1,-1},{-1,1},{1,-1},{1,1}
+        };
+        addDirectionalMoves(moves, x, y, dir, 8, isWhite, false);
+    }
+
+    // CAVALO
+    if (abs(piece) == 4) {
+        int dir[8][2] = {
+            {-2,-1},{-2,1},{-1,-2},{-1,2},
+            {1,-2},{1,2},{2,-1},{2,1}
+        };
+        addDirectionalMoves(moves, x, y, dir, 8, isWhite, false);
+    }
+
+    // PEÃO
+    if (abs(piece) == 6) {
+
+        int dir = isWhite ? -1 : 1;
+
+        // andar 1 casa
+        if (x + dir >= 0 && x + dir < 8 && boardState[x + dir][y] == 0)
+            moves.push_back({x + dir, y});
+
+        // andar 2 casas (apenas no movimento inicial)
+        if ((isWhite && x == 6) || (!isWhite && x == 1)) {
+            if (boardState[x + 2*dir][y] == 0 && boardState[x + dir][y] == 0)
+                moves.push_back({x + 2*dir, y});
+        }
+
+        // ataque
+        int attack[2][2] = {{dir,-1},{dir,1}};
+
+        for (auto a : attack) {
+            int i = x + a[0];
+            int j = y + a[1];
+
+            if (i>=0 && i<8 && j>=0 && j<8) {
+                if ((isWhite && boardState[i][j] < 0) ||
+                    (!isWhite && boardState[i][j] > 0)) {
+                    moves.push_back({i,j});
+                }
+            }
+        }
+    }
+
+    return moves;
 }
 
 void Board::addDirectionalMoves(
@@ -513,4 +281,35 @@ void Board::addDirectionalMoves(
             j += dy;
         }
     }
+}
+
+std::vector<std::pair<int,int>> Board::getValidMoves(int x, int y) {
+
+    auto moves = getMoves(x, y);
+    std::vector<std::pair<int,int>> valid;
+
+    int piece = boardState[x][y];
+    bool isWhite = piece > 0;
+
+    for (auto move : moves) {
+
+        int toX = move.first;
+        int toY = move.second;
+
+        int captured = boardState[toX][toY];
+
+        // simula
+        boardState[toX][toY] = piece;
+        boardState[x][y] = 0;
+
+        if (!isKingInCheck(isWhite)) {
+            valid.push_back(move);
+        }
+
+        // desfaz
+        boardState[x][y] = piece;
+        boardState[toX][toY] = captured;
+    }
+
+    return valid;
 }
