@@ -1,0 +1,8 @@
+{
+  "idf.currentSetup": "C:/Espressif/frameworks/esp-idf-v5.5.3/",
+  "terminal.integrated.defaultEncoding": "utf8",
+  "cmake.configureSettings": {
+    "CMAKE_TOOLCHAIN_FILE": "C:/C++/jogo de xadrez/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "VCPKG_TARGET_TRIPLET": "x64-windows"
+  }
+}

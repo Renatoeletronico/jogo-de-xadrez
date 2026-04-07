@@ -1,0 +1,3 @@
+C:/C++/jogo de xadrez/build/CMakeFiles/xadrez.dir
+C:/C++/jogo de xadrez/build/CMakeFiles/ALL_BUILD.dir
+C:/C++/jogo de xadrez/build/CMakeFiles/ZERO_CHECK.dir

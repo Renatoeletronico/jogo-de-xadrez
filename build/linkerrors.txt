@@ -1,0 +1,20 @@
+================================================================================
+Linker Errors
+Generated: 2026-04-03T15:29:43.148Z
+Total Errors: 5
+================================================================================
+
+[LNK2019] (MSVC)
+símbolo externo não resolvido, "public: __cdecl Board::Board(void)" (??0Board@@QEAA@XZ), referenciado na função "void __cdecl `dynamic initializer for 'board''(void)" (??__Eboard@@YAXXZ) [C:\C++\jogo de xadrez\build\xadrez.vcxproj]
+
+[LNK2019] (MSVC)
+símbolo externo não resolvido, "public: int __cdecl Board::getSize(void)" (?getSize@Board@@QEAAHXZ), referenciado na função main [C:\C++\jogo de xadrez\build\xadrez.vcxproj]
+
+[LNK2019] (MSVC)
+símbolo externo não resolvido, "public: int __cdecl Board::getPiece(int,int)" (?getPiece@Board@@QEAAHHH@Z), referenciado na função main [C:\C++\jogo de xadrez\build\xadrez.vcxproj]
+
+[LNK2019] (MSVC)
+símbolo externo não resolvido, "public: void __cdecl Board::handleClick(int,int)" (?handleClick@Board@@QEAAXHH@Z), referenciado na função main [C:\C++\jogo de xadrez\build\xadrez.vcxproj]
+
+[LNK1120] (MSVC)
+4 externo não resolvidos [C:\C++\jogo de xadrez\build\xadrez.vcxproj]
