@@ -3,8 +3,8 @@
 
 #define DEBUG_MODE 1
 
+inline void LOG(const std::string& msg) {
 #if DEBUG_MODE
-    #define LOG(x) std::cout << x << std::endl;
-#else
-    #define LOG(x)
+    std::cout << msg << std::endl;
 #endif
+}
