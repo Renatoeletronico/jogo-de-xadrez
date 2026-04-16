@@ -83,13 +83,29 @@ int main() {
         if (board.isPromotionPending()) {
             window.setTitle("1-Torre 2-Cavalo 3-Bispo 4-Rainha");
 
-            int choice;
+            int choice = 0;
             std::cout << "Promover peão (1-Torre 2-Cavalo 3-Bispo 4-Rainha): ";
             while (true) {
-                std::cin >> choice;
-                if (choice >= 1 && choice <= 4)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
+                    {
+                        choice = 1;
+                    }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2))
+                    {
+                        choice = 2;
+                    }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3))
+                    {
+                        choice = 3;
+                    }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4))
+                    {
+                        choice = 4;
+                    }
+
+                if (choice >= 1 && choice <= 4 )
                     break;
-                std::cout << "Escolha inválida, tente novamente: ";
+
             }
 
             // Chama seu método de promoção existente

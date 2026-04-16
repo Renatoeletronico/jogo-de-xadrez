@@ -69,8 +69,8 @@ void Board::handleClick(int mouseX, int mouseY) {
             boardState[selectedRow][selectedCol] = 0;
 
             // 🔥 promoção de peão
-        if (checkPawnPromotion(x, y, boardState[x][y])) {
-            return;
+        if (promotionPending == false) {
+            checkPawnPromotion(x, y, boardState[x][y]);
         }  
 
             // troca turno
@@ -108,6 +108,7 @@ void Board::handleClick(int mouseX, int mouseY) {
 }
 
 bool Board::checkPawnPromotion(int x, int y, int piece) {
+
     LOG("Checando promocao... X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Piece: " + std::to_string(piece) + "\n");
     if (abs(piece) != 6) return false;
 
@@ -545,7 +546,7 @@ void Board::promotePawn(int choice) {
     promotionPending = false;
 
     // Trocar turno apenas agora
-    whiteTurn = !whiteTurn;
+    //whiteTurn = !whiteTurn;
 }
 
 bool Board::isPromotionPending() const {
