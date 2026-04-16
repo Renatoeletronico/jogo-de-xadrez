@@ -542,7 +542,7 @@ void Board::promotePawn(int choice) {
 
     if (!promotionWhite) newPiece = -newPiece;
 
-    boardState[promotionRow][promotionCol] = newPiece;
+    boardState[promotionX][promotionY] = newPiece;
 
     // Limpar promoção
     promotionPending = false;
