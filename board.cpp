@@ -129,21 +129,23 @@ bool Board::checkPawnPromotion(int x, int y, int piece) {
 void Board::updateWindowTitle(sf::RenderWindow& window) {
 
     std::string titulo = "Jogo de Xadrez";
+    std::string texto = "";
+    texto = titulo;
 
     if (isCheckmate(whiteTurn)) {
         if (whiteTurn)
-            titulo += " - Xeque-mate! Pretas venceram";
+            texto = " - Xeque-mate! Pretas venceram";
         else
-            titulo += " - Xeque-mate! Brancas venceram";
+            texto = " - Xeque-mate! Brancas venceram";
     }
     else if (isKingInCheck(whiteTurn)) {
         if (whiteTurn)
-            titulo += " - Xeque no Rei Branco!";
+            texto = titulo += " - Xeque pretas!";
         else
-            titulo += " - Xeque no Rei Preto!";
+            texto = titulo += " - Xeque brancas!";
     }
 
-    window.setTitle(titulo);
+    window.setTitle(texto);
 }
 
 void Board::draw(RenderWindow& window) {

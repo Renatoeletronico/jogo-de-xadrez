@@ -84,7 +84,7 @@ int main() {
             window.setTitle("1-Torre 2-Cavalo 3-Bispo 4-Rainha");
 
             int choice = 0;
-            std::cout << "Promover peão (1-Torre 2-Cavalo 3-Bispo 4-Rainha): ";
+            std::cout << "Promover (1-Torre 2-Cavalo 3-Bispo 4-Rainha): ";
             while (true) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
                     {
@@ -110,9 +110,7 @@ int main() {
 
             // Chama seu método de promoção existente
             board.promotePawn(choice);
-        } else {
-            window.setTitle("Jogo de Xadrez");
-        }
+        } 
 
         // Desenha tabuleiro
         window.clear();
@@ -139,7 +137,7 @@ int main() {
 
         // Desenha destaques (seleção/movimentos válidos)
         board.drawHighlights(window);
-
+        board.updateWindowTitle(window);
         window.display();
     }
 
